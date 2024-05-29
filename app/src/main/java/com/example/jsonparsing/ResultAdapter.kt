@@ -18,7 +18,8 @@ class ResultAdapter(val context: Context, val items: ArrayList<ResultModelClass>
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(context).inflate(
-                R.layout.item_layout,
+//                R.layout.item_layout,
+                R.layout.layout_tem,
                 parent,
                 false
             )
