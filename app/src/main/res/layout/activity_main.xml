@@ -7,13 +7,33 @@
     android:background="#EEEEEE"
     tools:context=".MainActivity">
 
+   <TextView
+       android:id="@+id/mainTitle"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Events"
+       android:textSize="34dp"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.5"
+       app:layout_constraintStart_toStartOf="parent"/>
+
    <androidx.recyclerview.widget.RecyclerView
        android:id="@+id/rvResultList"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/mainTitle"
        app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintRight_toRightOf="parent"/>
 
+   <com.google.android.material.bottomnavigation.BottomNavigationView
+       android:id="@+id/bottomNavigationView"
+       android:layout_width="match_parent"
+       android:layout_height="50dp"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.5"
+       app:layout_constraintStart_toStartOf="parent"
+       app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
