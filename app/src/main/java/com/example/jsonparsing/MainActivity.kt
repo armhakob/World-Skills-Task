@@ -2,6 +2,7 @@ package com.example.jsonparsing
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jsonparsing.Result
@@ -53,6 +54,17 @@ class MainActivity : AppCompatActivity() {
         // adapter instance is set to the recyclerview to inflate the items.
         rvResultList.adapter = itemAdapter
 
+        val searchView = findViewById<SearchView>(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                itemAdapter.filter(newText.orEmpty())
+                return true
+            }
+        })
     }
 
     private fun getJSONFromAssets(): String? {
