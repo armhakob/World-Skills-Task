@@ -8,5 +8,6 @@ data class ResultModelClass (
     val id: Int,
     val title: String,
     val text: String,
-    val imgUrl: String
+    val imgUrl: String,
+    var isOpened: Boolean = false
 )

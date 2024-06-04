@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jsonparsing.Result
+import okhttp3.internal.notify
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 val imageUrl = result.getString("image_url")
 
                 val resultDetails =
-                    ResultModelClass(id, title, text, imageUrl)
+                    ResultModelClass(id, title, text, imageUrl, isOpened = false)
                 resultList.add(resultDetails)
             }
         } catch (e: JSONException) {
@@ -45,7 +46,10 @@ class MainActivity : AppCompatActivity() {
         val rvResultList = findViewById<RecyclerView>(R.id.rvResultList)
         rvResultList.layoutManager = LinearLayoutManager(this)
         // Adapter class is initialized and list is passed in the param.
-        val itemAdapter = ResultAdapter(this, resultList)
+        val itemAdapter = ResultAdapter(this, resultList) { position ->
+            resultList[position].isOpened = true
+            rvResultList.adapter?.notifyItemChanged(position)
+        }
         // adapter instance is set to the recyclerview to inflate the items.
         rvResultList.adapter = itemAdapter
 

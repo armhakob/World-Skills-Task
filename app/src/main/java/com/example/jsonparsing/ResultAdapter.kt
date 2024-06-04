@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 
-class ResultAdapter(val context: Context, val items: ArrayList<ResultModelClass>) :
+class ResultAdapter(val context: Context, private val items: ArrayList<ResultModelClass>, val onClick: (position: Int) -> Unit) :
     RecyclerView.Adapter<ResultAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,7 +28,7 @@ class ResultAdapter(val context: Context, val items: ArrayList<ResultModelClass>
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val item = items.get(position)
+        val item = items[position]
 
         holder.tvId.text = item.id.toString()
         holder.tvTitle.text = item.title
@@ -38,6 +38,14 @@ class ResultAdapter(val context: Context, val items: ArrayList<ResultModelClass>
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
             transformations(CircleCropTransformation())
+        }
+        holder.tvImage.setOnClickListener {
+            onClick(position)
+        }
+        holder.tvRead.text = if (item.isOpened) {
+            "Read"
+        } else {
+            "Unread"
         }
     }
 
@@ -51,5 +59,6 @@ class ResultAdapter(val context: Context, val items: ArrayList<ResultModelClass>
         val tvTitle = view.findViewById<TextView>(R.id.tv_title)
         val tvText = view.findViewById<TextView>(R.id.tv_text)
         val tvImage = view.findViewById<ImageView>(R.id.tv_img)
+        val tvRead = view.findViewById<TextView>(R.id.tv_isOpened)
     }
 }
