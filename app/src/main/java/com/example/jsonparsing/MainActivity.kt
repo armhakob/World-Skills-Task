@@ -1,87 +1,38 @@
 package com.example.jsonparsing
 
+import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.jsonparsing.Result
-import okhttp3.internal.notify
-import org.json.JSONException
-import org.json.JSONObject
-import java.io.IOException
-import java.nio.charset.Charset
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val resultList: ArrayList<ResultModelClass> = ArrayList()
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        val eventsFragment = EventsFragment(context = applicationContext)
+        val recordsFragment = RecordsFragment()
 
-        try {
-            val obj = JSONObject(getJSONFromAssets()!!)
-            // fetch JSONArray named users by using getJSONArray
-            val resultArray = obj.getJSONArray("result")
-            // Get the users data using for loop i.e. id, name, email and so on
+        setCurrentFragment(eventsFragment)
 
-            for (i in 0 until resultArray.length()) {
-                // Create a JSONObject for fetching single User's Data
-                val result = resultArray.getJSONObject(i)
-                // Fetch id store it in variable
-                val id = result.getInt("id")
-                val title = result.getString("title")
-                val text = result.getString("text")
-                val imageUrl = result.getString("image_url")
-
-                val resultDetails =
-                    ResultModelClass(id, title, text, imageUrl, isOpened = false)
-                resultList.add(resultDetails)
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.events_id -> setCurrentFragment(eventsFragment)
+                R.id.records_id -> setCurrentFragment(recordsFragment)
             }
-        } catch (e: JSONException) {
-            //exception
-            e.printStackTrace()
+            true
         }
-
-        // Set the LayoutManager that this RecyclerView will use.
-        val rvResultList = findViewById<RecyclerView>(R.id.rvResultList)
-        rvResultList.layoutManager = LinearLayoutManager(this)
-        // Adapter class is initialized and list is passed in the param.
-        val itemAdapter = ResultAdapter(this, resultList) { position ->
-            resultList[position].isOpened = true
-            rvResultList.adapter?.notifyItemChanged(position)
-        }
-        // adapter instance is set to the recyclerview to inflate the items.
-        rvResultList.adapter = itemAdapter
-
-        val searchView = findViewById<SearchView>(R.id.searchView)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                itemAdapter.filter(newText.orEmpty())
-                return true
-            }
-        })
+        ActivityCompat.requestPermissions(this, arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ), 0)
     }
-
-    private fun getJSONFromAssets(): String? {
-
-        var json: String? = null
-        val charset: Charset = Charsets.UTF_8
-        try {
-            val myResultJSONFile = assets.open("example.json")
-            val size = myResultJSONFile.available()
-            val buffer = ByteArray(size)
-            myResultJSONFile.read(buffer)
-            myResultJSONFile.close()
-            json = String(buffer, charset)
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return null
+    private fun setCurrentFragment(fragment: Fragment)=
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.flFragment,fragment)
+            commit()
         }
-        return json
-    }
 }

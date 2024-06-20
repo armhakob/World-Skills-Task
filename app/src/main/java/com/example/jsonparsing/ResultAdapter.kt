@@ -11,11 +11,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
+import java.util.Locale
 
-class ResultAdapter(val context: Context, private val items: ArrayList<ResultModelClass>, val onClick: (position: Int) -> Unit) :
+class ResultAdapter(private val context: Context, private val items: ArrayList<ResultModelClass>, val onClick: (item: ResultModelClass) -> Unit) :
     RecyclerView.Adapter<ResultAdapter.ViewHolder>(){
 
-        private var filteredItems: List<ResultModelClass> = items.toMutableList()
+        private var filteredItems: List<ResultModelClass> = items
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(context).inflate(
@@ -30,18 +31,19 @@ class ResultAdapter(val context: Context, private val items: ArrayList<ResultMod
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = filteredItems[position]
-
+        println("VR: item: ${item.viewCount}")
+        println("VR: item: ${item}")
         holder.tvId.text = item.id.toString()
         holder.tvTitle.text = item.title
         holder.tvText.text = item.text
-        holder.tvImage.load(item.imgUrl){
-//            Log.d("A:", "image")
+        holder.tvImage.load(item.imageUrl){
+            Log.d("A:", "image")
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
             transformations(CircleCropTransformation())
         }
-        holder.tvImage.setOnClickListener {
-            onClick(position)
+        holder.itemView.setOnClickListener {
+            onClick(item)
         }
         holder.tvRead.text = if (item.isOpened) {
             "Read"
@@ -50,21 +52,20 @@ class ResultAdapter(val context: Context, private val items: ArrayList<ResultMod
         }
     }
 
-    fun mapping(q: String) : Boolean {
-        if (q.contains("read"))
-        {
+    fun mapping(q: String): Boolean {
+        if (q.toLowerCase(Locale.US).equals("read")) {
             return true
-        } else{
+        } else {
             return false
         }
     }
     fun filter(query: String) {
-        filteredItems = if(query.isEmpty()){
+        val read = mapping(query)
+        filteredItems = if (query.isEmpty()) {
             items
-        }
-        else {
+        } else {
             items.filter {
-                it.isOpened == mapping(query)
+                it.isOpened == read
             }
         }
     }
