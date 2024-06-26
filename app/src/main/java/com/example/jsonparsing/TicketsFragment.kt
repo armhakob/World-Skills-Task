@@ -25,7 +25,7 @@ class TicketsFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         ticketViewModel = ViewModelProvider(requireActivity()).get(TicketViewModel::class.java)
-        val ticketList = ticketViewModel.ticketList
+        val ticketList = ticketViewModel.openTicketList + ticketViewModel.closeTicketList
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())

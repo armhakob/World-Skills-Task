@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TicketAdapter(private val context: Context, private val items: MutableList<Ticket>, val onClick: (item: Ticket) -> Unit) :
+class TicketAdapter(private val context: Context, private val items: List<Ticket>, val onClick: (item: Ticket) -> Unit) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     companion object {
         const val VIEW_TYPE_OPENING_HEADER = 0
@@ -19,7 +19,7 @@ class TicketAdapter(private val context: Context, private val items: MutableList
         return when (items[position]) {
             is Ticket -> {
                 if (items[position].type == "Opening") VIEW_TYPE_OPENING_HEADER
-                else if (items[position].type == "Opening") VIEW_TYPE_CLOSING_HEADER
+                else if (items[position].type == "Closing") VIEW_TYPE_CLOSING_HEADER
                 else VIEW_TYPE_TICKET
             }
             else -> throw IllegalArgumentException("Invalid item type")
@@ -49,7 +49,11 @@ class TicketAdapter(private val context: Context, private val items: MutableList
             is TicketViewHolder -> {
                 val item = items[position] as Ticket
                 holder.bind(item)
+                holder.itemView.setOnClickListener {
+                    onClick(item)
+                }
             }
+
         }
     }
 

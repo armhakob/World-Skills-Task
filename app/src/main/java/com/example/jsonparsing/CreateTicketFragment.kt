@@ -18,13 +18,14 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
-class CreateTicketFragment:Fragment() {
+class CreateTicketFragment : Fragment() {
     private val REQUEST_CODE = 100
     private lateinit var ticketViewModel: TicketViewModel
 
@@ -38,11 +39,11 @@ class CreateTicketFragment:Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-            val chooseImageButton = view.findViewById<Button>(R.id.chooseImageButton)
-            chooseImageButton.setOnClickListener{
-                pickImageFromGallery()
-            }
-
+        val chooseImageButton = view.findViewById<Button>(R.id.chooseImageButton)
+        chooseImageButton.setOnClickListener {
+            pickImageFromGallery()
+        }
+        ticketViewModel = ViewModelProvider(requireActivity()).get(TicketViewModel::class.java)
         val typeSpinner = view.findViewById<Spinner>(R.id.typeSpinner)
         val nameEditText = view.findViewById<EditText>(R.id.nameEditText)
 
@@ -53,10 +54,11 @@ class CreateTicketFragment:Fragment() {
 
         val createButton = view.findViewById<Button>(R.id.createButton)
 
-        createButton.setOnClickListener{
+        createButton.setOnClickListener {
             val selectedType = typeSpinner.selectedItem.toString()
             val enteredName: String = nameEditText.text.toString()
-            val imageUri = view.findViewById<ImageView>(R.id.previewImageView)?.tag?.toString() ?: ""
+            val imageUri =
+                view.findViewById<ImageView>(R.id.previewImageView)?.tag?.toString() ?: ""
 
             val currentDateTime: LocalDateTime = LocalDateTime.now()
             val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -66,10 +68,26 @@ class CreateTicketFragment:Fragment() {
 
             nameEditText.clearFocus()
             if (selectedType.isNotBlank() && selectedType.isNotBlank() && imageUri.isNotBlank()) {
-                val ticket = Ticket(selectedType, enteredName, imageUri, formattedDateTime, seatFormat) //change id
-                ticketViewModel.ticketList.add(ticket)
+                val ticket = Ticket(
+                    "",
+                    enteredName,
+                    imageUri,
+                    formattedDateTime,
+                    seatFormat
+                )
+                if(selectedType == "Closing") {
+                    ticketViewModel.addCloseTicket(ticket)
+                } else {
+                    ticketViewModel.addOpenTicket(ticket)
+                }
+                 //change id
+//                ticketViewModel.ticketList.add(ticket)
             } else {
-                Toast.makeText(requireContext(), "Fill all fields and select an image", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Fill all fields and select an image",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             parentFragmentManager.beginTransaction()
@@ -105,6 +123,7 @@ class CreateTicketFragment:Fragment() {
             val imageUri = data.data
 
             view?.findViewById<ImageView>(R.id.previewImageView)?.setImageURI(imageUri)
+            view?.findViewById<ImageView>(R.id.previewImageView)?.tag = imageUri
         }
     }
 

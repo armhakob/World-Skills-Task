@@ -62,8 +62,8 @@ class TicketDetailsFragment:Fragment() {
     }
 
     companion object {
-        fun newInstance(resultModel: Ticket): DetailFragment {
-            val fragment = DetailFragment()
+        fun newInstance(resultModel: Ticket): TicketDetailsFragment {
+            val fragment = TicketDetailsFragment()
             val args = Bundle().apply {
                 putString("type", resultModel.type)
                 putString("name", resultModel.name)
