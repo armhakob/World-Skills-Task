@@ -27,7 +27,13 @@ class RecordsFragment : Fragment(R.layout.fragment_records){
         return inflater.inflate(R.layout.fragment_records, container, false)
     }
 
-    private lateinit var mediaRecorder: MediaRecorder
+    private val mediaRecorder: MediaRecorder by lazy {
+        MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        }
+    }
     private lateinit var btnRecord: Button
     private lateinit var btnStopRecording: Button
     private lateinit var recyclerView: RecyclerView
@@ -64,21 +70,19 @@ class RecordsFragment : Fragment(R.layout.fragment_records){
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startRecording() {
         //outputFile = "${externalCharDir?.absolutePath}/audiorecord_${System.currentTimeMillis()}.3gp"
+        //Content resolver
         val externalStorageState = Environment.getExternalStorageState()
         if (externalStorageState == Environment.MEDIA_MOUNTED) {
             val externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
             outputFile = File(externalDir, "audiorecord_${System.currentTimeMillis()}.3gp").toString()
-            Log.d("Audio: ", outputFile)
-            mediaRecorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                setOutputFile(outputFile)
-
+            Log.d("Audio: ", externalDir.exists().toString())
+            mediaRecorder.apply {
                 try {
+                    setOutputFile(outputFile)
                     prepare()
                     start()
                 } catch (e: IOException) {
+                    Log.e("StartMediaRecorder","", e)
                     e.printStackTrace()
                 }
             }
@@ -95,9 +99,10 @@ class RecordsFragment : Fragment(R.layout.fragment_records){
             Log.d("Stop: ", "??????")
             try {
                 stop()
-                release()
+                reset()
+//                release()
             }catch (e: IllegalStateException){
-                Log.e("StopMediaRecorder", "Error while stopping MediaRecorder: ${e.message}")
+                Log.e("StopMediaRecorder","", e)
             }
 
         }
