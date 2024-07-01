@@ -39,12 +39,12 @@ class TicketDetailsFragment:Fragment() {
         val name = arguments?.getString("name") ?: ""
         val imgUri = arguments?.getString("imageUri") ?: ""
         val currentDate = arguments?.getString("currentDate") ?: ""
-        val seat = arguments?.getString("seat") ?: ""
+        val seat = arguments?.getString("seatNumber") ?: ""
 
         view.findViewById<TextView>(R.id.ticketTypeTextView).text = type
         view.findViewById<TextView>(R.id.ticketNameTextView).text = name
         view.findViewById<TextView>(R.id.ticketTimeTextView).text = currentDate
-        view.findViewById<TextView>(R.id.ticketSeatTextView).text = type
+        view.findViewById<TextView>(R.id.ticketSeatTextView).text = seat
         view.findViewById<ImageView>(R.id.ticketImageView).load(imgUri){
             Log.d("B:", "image")
             crossfade(true)
@@ -69,7 +69,7 @@ class TicketDetailsFragment:Fragment() {
                 putString("name", resultModel.name)
                 putString("imageUri", resultModel.imageUri)
                 putString("currentDate", resultModel.currentDate)
-                putString("seat", resultModel.seatNumber)
+                putString("seatNumber", resultModel.seatNumber)
             }
             fragment.arguments = args
             return fragment
